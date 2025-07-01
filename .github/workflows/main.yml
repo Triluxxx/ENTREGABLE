@@ -1,17 +1,14 @@
-# .github/workflows/deploy.yml
-# 🚀 CI/CD para despliegue local con Self-Hosted Runner en proyecto lab-clinico
-
 name: Deploy Lab Clinico Locally
 
 on:
   push:
-    branches: [ "main" ]  # o "master", depende de tu rama principal
-  workflow_dispatch:       # Permite ejecutar manualmente desde GitHub
+    branches: [ "main" ]
+  workflow_dispatch:
 
 env:
   DOCKER_PROJECT_NAME: 'labapp'
-  APP_CONTAINER_NAME: 'lab-clinico-app'
-  DB_CONTAINER_NAME: 'mariadb'
+  APP_CONTAINER_NAME: 'laboratorio_app'      # 👈 corregido aquí
+  DB_CONTAINER_NAME: 'mariadb'               # 👈 ya estaba bien
   DB_NAME: 'laboratorio_bd'
   DB_USER: 'laboratorio'
   DB_PASSWORD: 'fadic123'
@@ -39,8 +36,7 @@ jobs:
         run: |
           echo "🚀 Despliegue de Lab Clínico iniciando..."
 
-          # Entramos al directorio del docker-compose.yml si está dentro de una carpeta
-          cd . # o 'cd docker' si lo tienes en otra carpeta
+          cd .
 
           echo "🧹 Deteniendo cualquier despliegue anterior..."
           docker-compose -p ${{ env.DOCKER_PROJECT_NAME }} down -v --remove-orphans || echo "⚠ No se encontró despliegue previo."
