@@ -7,8 +7,8 @@ on:
 
 env:
   DOCKER_PROJECT_NAME: 'labapp'
-  APP_CONTAINER_NAME: 'laboratorio_app'      # 👈 corregido aquí
-  DB_CONTAINER_NAME: 'mariadb'               # 👈 ya estaba bien
+  APP_CONTAINER_NAME: 'laboratorio_app'       # Nombre del contenedor de la app
+  DB_CONTAINER_NAME: 'mariadb'                # Nombre del contenedor de la base de datos
   DB_NAME: 'laboratorio_bd'
   DB_USER: 'laboratorio'
   DB_PASSWORD: 'fadic123'
@@ -36,6 +36,9 @@ jobs:
         run: |
           echo "🚀 Despliegue de Lab Clínico iniciando..."
 
+          echo "🔎 Verificando arquitectura del runner..."
+          uname -m
+
           cd .
 
           echo "🧹 Deteniendo cualquier despliegue anterior..."
@@ -48,12 +51,23 @@ jobs:
           sleep 30
 
           echo "💾 Ejecutando script SQL si es necesario..."
-          docker exec -i ${{ env.DB_CONTAINER_NAME }} mysql -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }} ${{ env.DB_NAME }} < ./docker/estructura.sql
+          docker exec -i ${{ env.DB_CONTAINER_NAME }} mysql -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }} ${{ env.DB_NAME }} < ./docker/estructura.sql || echo "⚠ No se pudo ejecutar el script SQL"
+
+          echo "🧾 Logs de la base de datos:"
+          docker logs --tail 50 ${{ env.DB_CONTAINER_NAME }}
+
+          echo "📦 Verificando si el contenedor de la app está corriendo..."
+          APP_STATUS=$(docker inspect -f '{{.State.Running}}' ${{ env.APP_CONTAINER_NAME }} 2>/dev/null || echo "false")
+          if [ "$APP_STATUS" != "true" ]; then
+            echo "❌ El contenedor de la app no está corriendo. Verifica errores en el log."
+            docker logs ${{ env.APP_CONTAINER_NAME }}
+            exit 1
+          fi
 
           echo "📋 Estado actual de los contenedores:"
           docker-compose -p ${{ env.DOCKER_PROJECT_NAME }} ps
 
-          echo "📝 Logs de la aplicación:"
+          echo "📝 Logs recientes de la aplicación:"
           docker logs --tail 100 ${{ env.APP_CONTAINER_NAME }}
 
           echo "✅ Despliegue completo."
