@@ -1,5 +1,5 @@
 # Usamos una imagen base oficial de OpenJDK (Java 17 o 20 por ejemplo)
-FROM eclipse-temurin:17-jdk-jammy
+FROM openjdk:17-slim
 # Directorio dentro del contenedor donde estará la app
 WORKDIR /app
 # Copiamos el archivo jar generado a la carpeta /app en el contenedor
