@@ -2,7 +2,7 @@ version: '3.8'
 services:
   mariadb:
     image: mariadb:10.11
-    container_name: mariadb             # 👈 nombre correcto del contenedor (usado en deploy.yml)
+    container_name: mariadb
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: fadic123
@@ -12,11 +12,12 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - ./docker/estructura.sql:/docker-entrypoint-initdb.d/estructura.sql  # 👈 ejecuta al inicio
+      - ./docker/estructura.sql:/docker-entrypoint-initdb.d/estructura.sql
 
   app:
     build: .
-    container_name: laboratorio_app      # 👈 nombre real del contenedor de app (corrige en deploy.yml)
+    platform: linux/amd64          # 👈 CORRECCIÓN CLAVE
+    container_name: laboratorio_app
     depends_on:
       - mariadb
     ports:
