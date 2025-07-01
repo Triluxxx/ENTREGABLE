@@ -11,7 +11,7 @@ on:
 env:
   DOCKER_PROJECT_NAME: 'labapp'
   APP_CONTAINER_NAME: 'lab-clinico-app'
-  DB_CONTAINER_NAME: 'mariadb-lab-prod'
+  DB_CONTAINER_NAME: 'mariadb'
   DB_NAME: 'laboratorio_bd'
   DB_USER: 'laboratorio'
   DB_PASSWORD: 'fadic123'
