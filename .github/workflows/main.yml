@@ -27,7 +27,7 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: maven
+          # 🔴 Eliminamos cache: maven para evitar cuelgues
 
       - name: Build with Maven
         run: mvn clean package -DskipTests
